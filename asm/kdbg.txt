@@ -1,0 +1,19 @@
+Для wsl (да можно короче, но кто мне запретит):
+sudo apt install openssh-server
+sudo service ssh start
+ip addr
+sudo service ssh status
+Test-NetConnection -ComputerName 172.31.96.77 -Port 22
+sudo apt install extra-cmake-modules
+sudo apt install qt5-default qtbase5-dev qtbase5-dev-tools
+sudo apt install qtbase5-dev qtbase5-dev-tools libqt5widgets5
+sudo apt install libqt5gui5 libqt5core5a
+sudo apt install qt5-qmake qtbase5-dev qtchooser
+sudo apt install libkf5config-dev libkf5i18n-dev libkf5iconthemes-dev libkf5xmlgui-dev libkf5windowsystem-dev
+sudo apt install libkf5i18n-dev libkf5config-dev libkf5iconthemes-dev libkf5xmlgui-dev libkf5windowsystem-dev
+sudo apt install extra-cmake-modules
+git clone -b maint https://github.com/j6t/kdbg.git
+cmake .
+make
+sudo make install
+done(?)! 
