@@ -3,9 +3,11 @@ sudo apt install openssh-server
 sudo service ssh start
 ip addr
 sudo service ssh status
-Test-NetConnection -ComputerName 172.31.96.77 -Port 22
+Test-NetConnection -ComputerName {ваш_ip_из_ip_addr} -Port 22 (в powershell)
+далее по гайду тут https://kappa.cs.petrsu.ru/~chistyak/architecture/docs/windows_kdbg_debug.php
+после то что ниже:
 sudo apt install extra-cmake-modules
-sudo apt install qt5-default qtbase5-dev qtbase5-dev-tools
+sudo apt install qt5-default qtbase5-dev qtbase5-dev-tools (если ошибка, все равно идите дальше, не обращайте внимания)
 sudo apt install qtbase5-dev qtbase5-dev-tools libqt5widgets5
 sudo apt install libqt5gui5 libqt5core5a
 sudo apt install qt5-qmake qtbase5-dev qtchooser
@@ -13,6 +15,7 @@ sudo apt install libkf5config-dev libkf5i18n-dev libkf5iconthemes-dev libkf5xmlg
 sudo apt install libkf5i18n-dev libkf5config-dev libkf5iconthemes-dev libkf5xmlgui-dev libkf5windowsystem-dev
 sudo apt install extra-cmake-modules
 git clone -b maint https://github.com/j6t/kdbg.git
+cd kdbg
 cmake .
 make
 sudo make install
