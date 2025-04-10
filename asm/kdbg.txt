@@ -1,22 +1,29 @@
-Для wsl (да можно короче, но кто мне запретит):
-sudo apt install openssh-server
-sudo service ssh start
-ip addr
-sudo service ssh status
-Test-NetConnection -ComputerName {ваш_ip_из_ip_addr} -Port 22 (в powershell)
-далее по гайду тут https://kappa.cs.petrsu.ru/~chistyak/architecture/docs/windows_kdbg_debug.php
-после то что ниже:
-sudo apt install extra-cmake-modules
-sudo apt install qt5-default qtbase5-dev qtbase5-dev-tools (если ошибка, все равно идите дальше, не обращайте внимания)
-sudo apt install qtbase5-dev qtbase5-dev-tools libqt5widgets5
-sudo apt install libqt5gui5 libqt5core5a
-sudo apt install qt5-qmake qtbase5-dev qtchooser
+# Настройка SSH для удаленной отладки
+sudo apt install openssh-server     # Установка SSH сервера
+sudo service ssh start             # Запуск SSH сервиса
+ip addr                           # Получение IP адреса WSL
+sudo service ssh status           # Проверка статуса SSH сервиса
+
+# Проверка SSH подключения из Windows (выполнять в PowerShell)
+Test-NetConnection -ComputerName {ваш_ip_из_ip_addr} -Port 22
+
+# Установка зависимостей для сборки KDbg
+sudo apt install extra-cmake-modules    # Установка дополнительных модулей CMake
+# Установка Qt5 компонентов
+sudo apt install qt5-default qtbase5-dev qtbase5-dev-tools    # Основные компоненты Qt5
+# Если после верхнего выдает ошибку< продолжайте установку, не обращайте внимания
+sudo apt install qtbase5-dev qtbase5-dev-tools libqt5widgets5 # Виджеты Qt5
+sudo apt install libqt5gui5 libqt5core5a                      # GUI и Core библиотеки Qt5
+sudo apt install qt5-qmake qtbase5-dev qtchooser             # Инструменты сборки Qt5
+
+# Установка KDE Framework компонентов
 sudo apt install libkf5config-dev libkf5i18n-dev libkf5iconthemes-dev libkf5xmlgui-dev libkf5windowsystem-dev
 sudo apt install libkf5i18n-dev libkf5config-dev libkf5iconthemes-dev libkf5xmlgui-dev libkf5windowsystem-dev
 sudo apt install extra-cmake-modules
-git clone -b maint https://github.com/j6t/kdbg.git
-cd kdbg
-cmake .
-make
-sudo make install
-done(?)! 
+
+# Сборка и установка KDbg
+git clone -b maint https://github.com/j6t/kdbg.git    # Клонирование репозитория KDbg
+cd kdbg                                               # Переход в директорию проекта
+cmake .                                               # Генерация файлов сборки
+make                                                  # Компиляция
+sudo make install                                     # Установка
