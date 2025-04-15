@@ -1,5 +1,0 @@
-who -q
-date "+%d %B %Y"
-ncal -J 1752 >> calnedar
-cat -b calnedar
-452 calnedar
