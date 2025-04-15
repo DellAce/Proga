@@ -1,24 +1,66 @@
-cordinates = (1,1)
+coordinates = (1, 1)
+zone = (0, 0, 0, 0)
+path = []
+
 while True:
-    print(Введите смещение в формате буква:цифра)
+    print(
+        "Введите координаты зоны в формате X,Y,W,H (пустая строка для окончания ввода):"
+    )
     try:
-        tempsm=input().strip
-        if "R" in tempsm:
-            sm=tempsm.split(",")
-            cordinates=(cordinates[0]+int(sm[1]),cordinates[1])
-        elif "L" in tempsm:
-            sm=tempsm.split(",")
-            cordinates=(cordinates[0]-int(sm[1]),cordinates[1])
-        elif "U" in tempsm:
-            sm=tempsm.split(",")
-            cordinates=(cordinates[0],cordinates[1]+int(sm[1]))
-        elif "D" in tempsm:
-            sm=tempsm.split(",")
-            cordinates=(cordinates[0],cordinates[1]-int(sm[1]))
-        else:
-            print("Неверный ввод")
-            continue
-        if cordinates[0]>100 or cordinates[1]>100 or cordinates[0]<1 or cordinates[1]<1:
-            print("Вы вышли за пределы поля")
+        coords_input = input().strip()
+        if not coords_input:
             break
-        
+        zone = tuple(map(int, coords_input.split(",")))
+        if len(zone) != 4:
+            print("Ошибка формата, ожидалось 4 числа.")
+            continue
+    except:
+        print("Ошибка ввода")
+        continue
+
+while True:
+    print("Введите смещение в формате R,3 / L,2 / D,1 / U,1 (пустая строка — выход):")
+    try:
+        temp_sm = input().strip()
+        if not temp_sm:
+            break
+
+        sm = temp_sm.split(",")
+        if len(sm) != 2:
+            print("Неверный формат команды")
+            continue
+
+        smeshenie = sm[0].upper()
+        steps = int(sm[1])
+
+        for loop in range(steps):
+            if smeshenie == "R":
+                coordinates = (coordinates[0] + 1, coordinates[1])
+            elif smeshenie == "L":
+                coordinates = (coordinates[0] - 1, coordinates[1])
+            elif smeshenie == "D":
+                coordinates = (coordinates[0], coordinates[1] + 1)
+            elif smeshenie == "U":
+                coordinates = (coordinates[0], coordinates[1] - 1)
+            else:
+                print("Неверное направление, попробуйте R, L, U, D")
+                break
+
+            if not (1 <= coordinates[0] <= 100 and 1 <= coordinates[1] <= 100):
+                print("Вы вышли за пределы поля")
+                break
+
+            if (zone[0] <= coordinates[0] < zone[0] + zone[2]) and (
+                zone[1] <= coordinates[1] < zone[1] + zone[3]
+            ):
+                print("Вы попали в запретную зону")
+                break
+
+            path.append(coordinates)
+    except:
+        print("Ошибка ввода")
+        continue
+
+print("Путь:")
+for step in path:
+    print(f"{step[0]},{step[1]}")
