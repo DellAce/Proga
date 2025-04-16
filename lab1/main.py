@@ -1,10 +1,10 @@
 coordinates = (1, 1)
 zone = (0, 0, 0, 0)
 path = []
-
+check = False
 while True:
     print(
-        "Введите координаты зоны в формате X,Y,W,H (пустая строка для окончания ввода):"
+        "Введите координаты зоны в формате x,y,w,h (пустая строка для окончания ввода):"
     )
     try:
         coords_input = input().strip()
@@ -48,19 +48,22 @@ while True:
 
             if not (1 <= coordinates[0] <= 100 and 1 <= coordinates[1] <= 100):
                 print("Вы вышли за пределы поля")
+                check = True
                 break
 
             if (zone[0] <= coordinates[0] < zone[0] + zone[2]) and (
                 zone[1] <= coordinates[1] < zone[1] + zone[3]
             ):
                 print("Вы попали в запретную зону")
+                check = True
                 break
-
             path.append(coordinates)
+        if check == True:
+            break
     except:
         print("Ошибка ввода")
         continue
-
-print("Путь:")
-for step in path:
-    print(f"{step[0]},{step[1]}")
+if check == False:
+    print("Путь:")
+    for step in path:
+        print(f"{step[0]},{step[1]}")
