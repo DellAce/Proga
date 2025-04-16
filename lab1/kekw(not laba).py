@@ -45,9 +45,11 @@ while True:
                 check = True
                 break
 
-            for cmd_dir, cmd_steps in reversed(non_B_command[-steps_back:]):
+            for commands in reversed(non_B_command[-steps_back:]):
+                cmd_dir = commands[0]
+                cmd_steps = commands[1]
                 rev_dir = reverse[cmd_dir]
-                for _ in range(cmd_steps):
+                for loop in range(cmd_steps):
                     if rev_dir == "R":
                         coordinates = (coordinates[0] + 1, coordinates[1])
                     elif rev_dir == "L":
@@ -87,21 +89,21 @@ while True:
             print("Неверный формат команды")
             continue
 
-        smeshenie = sm[0].upper()
+        dirrection = sm[0].upper()
         steps = int(sm[1])
 
-        if smeshenie not in ["R", "L", "U", "D"]:
+        if dirrection not in ["R", "L", "U", "D"]:
             print("Неверное направление")
             continue
 
-        for _ in range(steps):
-            if smeshenie == "R":
+        for loop in range(steps):
+            if dirrection == "R":
                 coordinates = (coordinates[0] + 1, coordinates[1])
-            elif smeshenie == "L":
+            elif dirrection == "L":
                 coordinates = (coordinates[0] - 1, coordinates[1])
-            elif smeshenie == "D":
+            elif dirrection == "D":
                 coordinates = (coordinates[0], coordinates[1] + 1)
-            elif smeshenie == "U":
+            elif dirrection == "U":
                 coordinates = (coordinates[0], coordinates[1] - 1)
 
             if not (1 <= coordinates[0] <= 100 and 1 <= coordinates[1] <= 100):
@@ -120,7 +122,7 @@ while True:
 
         if check:
             break
-        history.append((smeshenie, steps))
+        history.append((dirrection, steps))
     except:
         print("Ошибка ввода")
         continue
