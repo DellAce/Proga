@@ -1,4 +1,4 @@
-name: Проверка Python окружения
+name: Запуск всех .py файлов из лабораторных
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [proga]
 
 jobs:
-  check:
+  run-python-files:
     runs-on: ubuntu-latest
 
     steps:
@@ -17,9 +17,17 @@ jobs:
       - name: Устанавливаем Python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.11" # поменяй на нужную тебе версию
+          python-version: "3.13"
 
-      - name: Устанавливаем зависимости (если есть requirements.txt)
+      - name: Устанавливаем зависимости
         run: |
           python -m pip install --upgrade pip
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      - name: Запускаем все .py файлы, кроме с "kekw"
+        run: |
+          echo "Запуск всех .py файлов..."
+          find . -type f -name "*.py" | while read file; do
+            echo ">>> python $file"
+            python "$file"
+          done
