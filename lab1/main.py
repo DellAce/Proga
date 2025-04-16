@@ -39,7 +39,9 @@ while True:
             steps_back = False
 
         if steps_back is not False:
-            non_B_command = [cmd for cmd in history if cmd[0] != "B"]
+            for cmd in history:
+                if cmd[0] != "B":
+                    non_B_command = cmd
             if steps_back > len(non_B_command):
                 print("Ошибка: недостаточно команд для отката.")
                 check = True
