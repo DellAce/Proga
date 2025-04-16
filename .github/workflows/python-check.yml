@@ -1,0 +1,32 @@
+name: Проверка всех .py файлов
+
+on:
+  push:
+    branches: [proga]
+  pull_request:
+    branches: [proga]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Клонируем репозиторий
+        uses: actions/checkout@v3
+
+      - name: Устанавливаем Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Устанавливаем зависимости (если есть requirements.txt)
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      - name: Запускаем все .py файлы из папки proga_hw
+        run: |
+          for file in proga_hw/*.py; do
+            echo "Запуск $file"
+            python "$file"
+          done
