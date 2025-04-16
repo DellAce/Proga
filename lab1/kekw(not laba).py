@@ -1,160 +1,131 @@
-import tkinter as tk
-from tkinter import messagebox, scrolledtext, Canvas
+coordinates = (1, 1)
+zone = (0, 0, 0, 0)
+path = []
+check = False
+history = []
+reverse = {"R": "L", "L": "R", "U": "D", "D": "U"}
 
-def create_app():
-    window = tk.Tk()
-    window.title("Робот-преобразователь")
-    window.geometry("800x900")  # Увеличим высоту окна
+while True:
+    print(
+        "Введите координаты зоны в формате x,y,w,h (пустая строка для окончания ввода):"
+    )
+    try:
+        coords_input = input().strip()
+        if not coords_input:
+            break
+        zone = tuple(map(int, coords_input.split(",")))
+        if len(zone) != 4:
+            print("Ошибка формата, ожидалось 4 числа.")
+            continue
+    except:
+        print("Ошибка ввода")
+        continue
 
-    # === Ввод запретных зон ===
-    tk.Label(window, text="Запретные зоны (X,Y,W,H):").pack()
-    zones_text = scrolledtext.ScrolledText(window, height=5)
-    zones_text.pack(fill="x", padx=10)
+while True:
+    print(
+        "Введите смещение в формате R,3 / L,2 / D,1 / U,1 / B,1 (пустая строка — выход):"
+    )
+    try:
+        temp_sm = input().strip()
+        if not temp_sm:
+            break
 
-    # === Ввод команд ===
-    tk.Label(window, text="Высокоуровневые команды (R,L,U,D,B):").pack()
-    commands_text = scrolledtext.ScrolledText(window, height=8)
-    commands_text.pack(fill="x", padx=10)
+        sm = temp_sm.split(",")
+        if len(sm) == 1 and sm[0].upper() == "B":
+            steps_back = 1
+        elif len(sm) == 2 and sm[0].upper() == "B":
+            steps_back = int(sm[1])
+        else:
+            steps_back = False
 
-    # === Вывод результата ===
-    tk.Label(window, text="Результат (низкоуровневая программа):").pack()
-    result_text = scrolledtext.ScrolledText(window, height=10)
-    result_text.pack(fill="both", padx=10, pady=5, expand=False)
+        if steps_back is not False:
+            non_B_command = [cmd for cmd in history if cmd[0] != "B"]
+            if steps_back > len(non_B_command):
+                print("Ошибка: недостаточно команд для отката.")
+                check = True
+                break
 
-    # === Кнопка выполнения ===
-    tk.Button(window, text="Выполнить", command=lambda: execute_program()).pack(pady=10)
+            for cmd_dir, cmd_steps in reversed(non_B_command[-steps_back:]):
+                rev_dir = reverse[cmd_dir]
+                for _ in range(cmd_steps):
+                    if rev_dir == "R":
+                        coordinates = (coordinates[0] + 1, coordinates[1])
+                    elif rev_dir == "L":
+                        coordinates = (coordinates[0] - 1, coordinates[1])
+                    elif rev_dir == "D":
+                        coordinates = (coordinates[0], coordinates[1] + 1)
+                    elif rev_dir == "U":
+                        coordinates = (coordinates[0], coordinates[1] - 1)
 
-    # === Поле визуализации ===
-    tk.Label(window, text="Визуализация пути робота:").pack()
-    canvas = Canvas(window, width=500, height=500, bg="white")
-    canvas.pack(pady=10)
+                    if not (1 <= coordinates[0] <= 100 and 1 <= coordinates[1] <= 100):
+                        print("Вы вышли за пределы поля")
+                        check = True
+                        break
 
-    CELL_SIZE = 5
+                    if (zone[0] <= coordinates[0] < zone[0] + zone[2]) and (
+                        zone[1] <= coordinates[1] < zone[1] + zone[3]
+                    ):
+                        print("Вы попали в запретную зону")
+                        check = True
+                        break
 
-    def draw_path(path, forbidden):
-        canvas.delete("all")
-        for x, y in forbidden:
-            canvas.create_rectangle((x - 1) * CELL_SIZE, (y - 1) * CELL_SIZE,
-                                    x * CELL_SIZE, y * CELL_SIZE, fill="red")
-        for i in range(1, len(path)):
-            x1, y1 = path[i - 1]
-            x2, y2 = path[i]
-            canvas.create_line((x1 - 0.5) * CELL_SIZE, (y1 - 0.5) * CELL_SIZE,
-                               (x2 - 0.5) * CELL_SIZE, (y2 - 0.5) * CELL_SIZE,
-                               fill="blue", width=2)
-        sx, sy = path[0]
-        canvas.create_oval((sx - 0.5) * CELL_SIZE - 2, (sy - 0.5) * CELL_SIZE - 2,
-                           (sx - 0.5) * CELL_SIZE + 2, (sy - 0.5) * CELL_SIZE + 2,
-                           fill="green")
-        ex, ey = path[-1]
-        canvas.create_oval((ex - 0.5) * CELL_SIZE - 2, (ey - 0.5) * CELL_SIZE - 2,
-                           (ex - 0.5) * CELL_SIZE + 2, (ey - 0.5) * CELL_SIZE + 2,
-                           fill="orange")
+                    path.append(coordinates)
+                if check:
+                    break
+            if check:
+                break
+            count = 0
+            for i in range(len(history) - 1, -1, -1):
+                if history[i][0] != "B":
+                    count += 1
+                    history.pop(i)
+                    if count == steps_back:
+                        break
+            continue
 
-    def parse_zones(text):
-        forbidden = set()
-        for line in text.strip().splitlines():
-            if not line.strip():
-                continue
-            try:
-                x, y, w, h = map(int, line.strip().split(","))
-                for xx in range(x, x + w):
-                    for yy in range(y, y + h):
-                        forbidden.add((xx, yy))
-            except:
-                messagebox.showerror("Ошибка", f"Неверный формат зоны: {line}")
-                return None
-        return forbidden
+        if len(sm) != 2:
+            print("Неверный формат команды")
+            continue
 
-    def execute_program():
-        result_text.delete("1.0", tk.END)
+        smeshenie = sm[0].upper()
+        steps = int(sm[1])
 
-        forbidden = parse_zones(zones_text.get("1.0", tk.END))
-        if forbidden is None:
-            return
+        if smeshenie not in ["R", "L", "U", "D"]:
+            print("Неверное направление")
+            continue
 
-        direction_map = {"R": (1, 0), "L": (-1, 0), "U": (0, -1), "D": (0, 1)}
-        reverse_direction = {"R": "L", "L": "R", "U": "D", "D": "U"}
+        for _ in range(steps):
+            if smeshenie == "R":
+                coordinates = (coordinates[0] + 1, coordinates[1])
+            elif smeshenie == "L":
+                coordinates = (coordinates[0] - 1, coordinates[1])
+            elif smeshenie == "D":
+                coordinates = (coordinates[0], coordinates[1] + 1)
+            elif smeshenie == "U":
+                coordinates = (coordinates[0], coordinates[1] - 1)
 
-        current_x, current_y = 1, 1
-        path = [(current_x, current_y)]
-        command_history = []
+            if not (1 <= coordinates[0] <= 100 and 1 <= coordinates[1] <= 100):
+                print("Вы вышли за пределы поля")
+                check = True
+                break
 
-        def move(dir_char, steps, x, y):
-            dx, dy = direction_map[dir_char]
-            for _ in range(steps):
-                new_x, new_y = x + dx, y + dy
-                if not (1 <= new_x <= 100 and 1 <= new_y <= 100):
-                    messagebox.showerror("Ошибка", "Выход за границы поля.")
-                    return None, None
-                if (new_x, new_y) in forbidden:
-                    messagebox.showerror("Ошибка", "Попытка зайти в запретную зону.")
-                    return None, None
-                path.append((new_x, new_y))
-                x, y = new_x, new_y
-            return x, y
+            if (zone[0] <= coordinates[0] < zone[0] + zone[2]) and (
+                zone[1] <= coordinates[1] < zone[1] + zone[3]
+            ):
+                print("Вы попали в запретную зону")
+                check = True
+                break
 
-        def back(n, x, y):
-            nonlocal command_history
-            non_b_commands = [cmd for cmd in command_history if cmd[0] != "B"]
-            if n > len(non_b_commands):
-                messagebox.showerror("Ошибка", "Недостаточно команд для отмены.")
-                return None, None
-            to_revert = non_b_commands[-n:][::-1]
-            for cmd in to_revert:
-                command_history.remove(cmd)
-            for dir_char, steps in to_revert:
-                rev = reverse_direction[dir_char]
-                x, y = move(rev, steps, x, y)
-                if x is None:
-                    return None, None
-            return x, y
+            path.append(coordinates)
 
-        for line in commands_text.get("1.0", tk.END).strip().splitlines():
-            parts = [p.strip() for p in line.strip().split(",")]
-            if not parts:
-                continue
+        if check:
+            break
+        history.append((smeshenie, steps))
+    except:
+        print("Ошибка ввода")
+        continue
 
-            if len(parts) == 1:
-                if parts[0].upper() == "B":
-                    current_x, current_y = back(1, current_x, current_y)
-                    if current_x is None:
-                        return
-                else:
-                    messagebox.showwarning("Ошибка", f"Непонятная команда: {line}")
-                continue
-
-            elif len(parts) == 2:
-                dir_char = parts[0].upper()
-                try:
-                    steps = int(parts[1])
-                except:
-                    messagebox.showwarning("Ошибка", f"Неверное число в команде: {line}")
-                    continue
-
-                if dir_char in direction_map:
-                    new_x, new_y = move(dir_char, steps, current_x, current_y)
-                    if new_x is None:
-                        return
-                    current_x, current_y = new_x, new_y
-                    command_history.append((dir_char, steps))
-                elif dir_char == "B":
-                    current_x, current_y = back(steps, current_x, current_y)
-                    if current_x is None:
-                        return
-                else:
-                    messagebox.showwarning("Ошибка", f"Неизвестная команда: {line}")
-                    continue
-            else:
-                messagebox.showwarning("Ошибка", f"Неверный формат команды: {line}")
-                continue
-
-        for x, y in path[1:]:
-            result_text.insert(tk.END, f"{x},{y}\n")
-
-        draw_path(path, forbidden)
-
-    window.mainloop()
-
-if __name__ == "__main__":
-    create_app()
+if check == False:
+    print("Путь:")
+    for step in path:
+        print(f"{step[0]},{step[1]}")

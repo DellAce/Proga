@@ -1,6 +1,7 @@
 coordinates = (1, 1)
 zone = (0, 0, 0, 0)
 path = []
+history = []
 check = False
 while True:
     print(
