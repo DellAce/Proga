@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void main()
+int main()
 {
     int eax = 5, ebx = 1; //  регистры
     while (eax != 0)      // пока не 0 продолжаем цикл
@@ -10,4 +10,5 @@ void main()
         eax--;           // декремент
     }
     printf("ebx = %d\n", ebx); // принтф ebx
+    return 0;
 }
