@@ -1,12 +1,3 @@
-# Настройка SSH для удаленной отладки
-sudo apt install openssh-server     # Установка SSH сервера
-sudo service ssh start             # Запуск SSH сервиса
-ip addr                           # Получение IP адреса WSL
-sudo service ssh status           # Проверка статуса SSH сервиса
-
-# Проверка SSH подключения из Windows (выполнять в PowerShell)
-Test-NetConnection -ComputerName {ваш_ip_из_ip_addr} -Port 22
-
 # Установка зависимостей для сборки KDbg
 sudo apt install extra-cmake-modules    # Установка дополнительных модулей CMake
 # Установка Qt5 компонентов
