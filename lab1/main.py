@@ -1,5 +1,5 @@
 coordinates = (1, 1)
-zone = (0, 0, 0, 0)
+zone = []
 path = []
 check = False
 history = []
@@ -13,12 +13,13 @@ while True:
         coords_input = input().strip()
         if not coords_input:
             break
-        zone = tuple(map(int, coords_input.split(",")))
-        if len(zone) != 4:
-            print("Ошибка формата, ожидалось 4 числа.")
-            continue
+        zone.append(tuple(map(int, coords_input.split(","))))
+        for i in range(len(zone)):
+            if len(zone[i]) != 4:
+                print("Ошибка формата, ожидалось 4 числа.")
+                continue
     except:
-        print("Ошибка ввода")
+        print("Оши1111бка ввода")
         continue
 
 while True:
@@ -69,12 +70,13 @@ while True:
                         check = True
                         break
 
-                    if (zone[0] <= coordinates[0] < zone[0] + zone[2]) and (
-                        zone[1] <= coordinates[1] < zone[1] + zone[3]
-                    ):
-                        print("Вы попали в запретную зону")
-                        check = True
-                        break
+                    for i in range(len(zone)):
+                        if (
+                            zone[i][0] <= coordinates[0] < zone[i][0] + zone[i][2]
+                        ) and (zone[i][1] <= coordinates[1] < zone[i][1] + zone[i][3]):
+                            print("Вы попали в запретную зону")
+                            check = True
+                            break
 
                     path.append(coordinates)
                 if check:
@@ -116,12 +118,13 @@ while True:
                 check = True
                 break
 
-            if (zone[0] <= coordinates[0] < zone[0] + zone[2]) and (
-                zone[1] <= coordinates[1] < zone[1] + zone[3]
-            ):
-                print("Вы попали в запретную зону")
-                check = True
-                break
+            for i in range(len(zone)):
+                if (zone[i][0] <= coordinates[0] < zone[i][0] + zone[i][2]) and (
+                    zone[i][1] <= coordinates[1] < zone[i][1] + zone[i][3]
+                ):
+                    print("Вы попали в запретную зону")
+                    check = True
+                    break
 
             path.append(coordinates)
 
@@ -129,7 +132,7 @@ while True:
             break
         history.append((dirrection, steps))
     except:
-        print("Ошибка ввода")
+        print("Ошиб2222ка ввода")
         continue
 
 if check == False:
