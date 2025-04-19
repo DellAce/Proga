@@ -19,7 +19,7 @@ while True:
                 print("Ошибка формата, ожидалось 4 числа.")
                 continue
     except:
-        print("Оши1111бка ввода")
+        print("Ошибка ввода(code 1)")
         continue
 
 while True:
@@ -132,7 +132,7 @@ while True:
             break
         history.append((dirrection, steps))
     except:
-        print("Ошиб2222ка ввода")
+        print("Ошибка ввода(code 2)")
         continue
 
 if check == False:
