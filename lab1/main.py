@@ -109,20 +109,6 @@ while True:
         print("Ошибка ввода(2)")
         continue
 
-
-def check_errors():
-    if not (1 <= coordinates[0] <= 100 and 1 <= coordinates[1] <= 100):
-        print("Вы вышли за пределы поля")
-        return True
-    for i in range(len(zone)):
-        if (zone[i][0] <= coordinates[0] < zone[i][0] + zone[i][2]) and (
-            zone[i][1] <= coordinates[1] < zone[i][1] + zone[i][3]
-        ):
-            print("Вы попали в запретную зону")
-            return True
-    return False
-
-
 for i in range(len(path)):
     coordinates = path[i]
     if not (1 <= coordinates[0] <= 100 and 1 <= coordinates[1] <= 100):
