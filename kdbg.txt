@@ -1,0 +1,20 @@
+# Установка зависимостей для сборки KDbg
+sudo apt install extra-cmake-modules    # Установка дополнительных модулей CMake
+# Установка Qt5 компонентов
+sudo apt install qt5-default qtbase5-dev qtbase5-dev-tools    # Основные компоненты Qt5
+# Если после верхнего выдает ошибку< продолжайте установку, не обращайте внимания
+sudo apt install qtbase5-dev qtbase5-dev-tools libqt5widgets5 # Виджеты Qt5
+sudo apt install libqt5gui5 libqt5core5a                      # GUI и Core библиотеки Qt5
+sudo apt install qt5-qmake qtbase5-dev qtchooser             # Инструменты сборки Qt5
+
+# Установка KDE Framework компонентов
+sudo apt install libkf5config-dev libkf5i18n-dev libkf5iconthemes-dev libkf5xmlgui-dev libkf5windowsystem-dev
+sudo apt install libkf5i18n-dev libkf5config-dev libkf5iconthemes-dev libkf5xmlgui-dev libkf5windowsystem-dev
+sudo apt install extra-cmake-modules
+
+# Сборка и установка KDbg
+git clone -b maint https://github.com/j6t/kdbg.git    # Клонирование репозитория KDbg
+cd kdbg                                               # Переход в директорию проекта
+cmake .                                               # Генерация файлов сборки
+make                                                  # Компиляция
+sudo make install                                     # Установка
