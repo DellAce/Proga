@@ -84,7 +84,7 @@ while True:
             if check:
                 break
             count = 0
-            for i in range(len(history) - 1, -1, -1):
+            for i in reversed(range(len(history))):
                 if history[i][0] != "B":
                     count += 1
                     history.pop(i)
