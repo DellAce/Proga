@@ -65,19 +65,6 @@ while True:
                     elif rev_dir == "U":
                         coordinates = (coordinates[0], coordinates[1] - 1)
 
-                    if not (1 <= coordinates[0] <= 100 and 1 <= coordinates[1] <= 100):
-                        print("Вы вышли за пределы поля")
-                        check = True
-                        break
-
-                    for i in range(len(zone)):
-                        if (
-                            zone[i][0] <= coordinates[0] < zone[i][0] + zone[i][2]
-                        ) and (zone[i][1] <= coordinates[1] < zone[i][1] + zone[i][3]):
-                            print("Вы попали в запретную зону")
-                            check = True
-                            break
-
                     path.append(coordinates)
                 if check:
                     break
@@ -87,7 +74,7 @@ while True:
             for i in reversed(range(len(history))):
                 if history[i][0] != "B":
                     count += 1
-                    history.pop(i)
+                    del history[i]
                     if count == steps_back:
                         break
             continue
@@ -113,19 +100,6 @@ while True:
             elif dirrection == "U":
                 coordinates = (coordinates[0], coordinates[1] - 1)
 
-            if not (1 <= coordinates[0] <= 100 and 1 <= coordinates[1] <= 100):
-                print("Вы вышли за пределы поля")
-                check = True
-                break
-
-            for i in range(len(zone)):
-                if (zone[i][0] <= coordinates[0] < zone[i][0] + zone[i][2]) and (
-                    zone[i][1] <= coordinates[1] < zone[i][1] + zone[i][3]
-                ):
-                    print("Вы попали в запретную зону")
-                    check = True
-                    break
-
             path.append(coordinates)
 
         if check:
@@ -134,6 +108,36 @@ while True:
     except:
         print("Ошибка ввода(2)")
         continue
+
+
+def check_errors():
+    if not (1 <= coordinates[0] <= 100 and 1 <= coordinates[1] <= 100):
+        print("Вы вышли за пределы поля")
+        return True
+    for i in range(len(zone)):
+        if (zone[i][0] <= coordinates[0] < zone[i][0] + zone[i][2]) and (
+            zone[i][1] <= coordinates[1] < zone[i][1] + zone[i][3]
+        ):
+            print("Вы попали в запретную зону")
+            return True
+    return False
+
+
+for i in range(len(path)):
+    coordinates = path[i]
+    if not (1 <= coordinates[0] <= 100 and 1 <= coordinates[1] <= 100):
+        print("Вы вышли за пределы поля")
+        check = True
+        break
+for i in range(len(zone)):
+    coordinates = path[i]
+    if (zone[i][0] <= coordinates[0] < zone[i][0] + zone[i][2]) and (
+        zone[i][1] <= coordinates[1] < zone[i][1] + zone[i][3]
+    ):
+        print("Вы попали в запретную зону")
+        check = True
+        break
+
 
 if check == False:
     print("Путь:")
