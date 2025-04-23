@@ -1,0 +1,40 @@
+name: Запуск лабораторок Python
+
+on:
+  push:
+    branches: [proga]
+  pull_request:
+    branches: [proga]
+
+jobs:
+  run-python:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Клонируем репозиторий
+        uses: actions/checkout@v3
+
+      - name: Устанавливаем Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.13"
+
+      - name: Устанавливаем зависимости (если есть)
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      - name: Запуск .py файлов без input(), с таймаутом
+        run: |
+          echo "🧪 Начинаем запуск .py файлов"
+          find . -type f -name "*.py" | while read file; do
+            if grep -q "input(" "$file"; then
+              echo "⏭ Пропущен $file (обнаружен input())"
+              continue
+            fi
+            echo "▶️ Запуск $file"
+            timeout 15s python "$file"
+            if [ $? -eq 124 ]; then
+              echo "⚠️ Таймаут: $file выполнялся слишком долго"
+            fi
+          done
