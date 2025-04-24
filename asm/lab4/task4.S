@@ -41,8 +41,7 @@ kbd_input:
     subb deff, %al
     xor %ah, %ah
     addw summ, %ax
-    cmpw $65535, %ax
-    jae print_overflow_msg
+    jc print_overflow_msg
     movw %ax, summ
     jmp show_prompt
 
@@ -58,20 +57,7 @@ print_sum:
     movl $0, %edx
     idivl ten        # делим на 10
     addb $'0', %dl      # преобразуем цифру в не цифру
-    lea outbuf, %edi
-    addl $15, %edi      # ставим указатель в конец буфера
-    subl %ebx, %edi     # сдвигаемся влево по количеству цифр
-    movb %dl, (%edi)
-    incl %ebx
-    cmpl $0, %eax
-    jg .nextdigit
 
-    # write
-    movl $4, %eax
-    movl $1, %ebx
-    movl %ebx, %edx     # длина
-    movl %edi, %ecx     # адрес начала числа
-    int $0x80
 
     jmp stop
 
