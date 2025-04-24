@@ -1,4 +1,4 @@
-# СДЕЛАТЬ ПРОВЕРКУ НА 65 536 БУКВАЛЬНО
+# из dt over
 
 /*
  * Программа ввода кодов цифровых символов в буфер в ОП
@@ -22,60 +22,62 @@ _start:
     sub    %esi, %esi     # указатель адреса байта в буфере buf (индексный регистр)
 
 show_prompt:
-    Puts "Вводите цифру, друг мой!"     # макровызов вывода строки в
-                    # файл stdout (подсказка ввода)
+    Puts "Вводите цифру, друг мой!"     # макровызов вывода строки в stdout
 
 kbd_input:
-    Getchar $c          # макровызов ввода байта из stdin в
-            # промежуточный буфер c
+    Getchar $c          # макровызов ввода байта из stdin в c
 
-    cmpl $0, %eax     # наступило событие EOF (конец файла stdin) ?
-    je print_sum      # Да - выводим сумму
+    cmpl $0, %eax     # EOF?
+    je print_sum      # Да — выводим сумму
 
-    cmpb $'\n', c     # это символ перевода строки ?
-    je kbd_input     # ДА - на ввод следующего символа
-    cmpb $'9', c      # код больше кода символа '9' ?
-    ja print_err_msg    # ДА - на вывод сообщения об ошибке
-    cmpb $'0', c    # код меньше кода символа '0' ?
-    jb print_err_msg    # ДА - на вывод сообщения об ошибке
+    cmpb $'\n', c
+    je kbd_input
+    cmpb $'9', c
+    ja print_err_msg
+    cmpb $'0', c
+    jb print_err_msg
 
-    movb c, %al         # загружаем символ из c
-    subb $48, %al       # преобразуем в цифру (ASCII - '0')
-    xor %ah, %ah        # обнуляем старшие 8 бит
-    addw summ, %ax      # прибавляем к текущей сумме
-    movw %ax, summ      # сохраняем обратно
+    movb c, %al
+    subb deff, %al
+    xor %ah, %ah
+    addw summ, %ax
+    cmpw $65535, %ax
+    jae print_overflow_msg
+    movw %ax, summ
+    jmp show_prompt
 
-
-    jmp show_prompt    # на ввод следующего символа
+print_overflow_msg:
+    Puts "Слишком большая сумма! Переполнение."
+    jmp stop
 
 print_sum:
-    xor %eax, %eax
-    movw summ, %eax        # загружаем сумму в eax
-    lea outbuf + 16, %edi    # edi — указатель на конец буфера
-    mov $0, %ecx             # счётчик цифр
+    movl $0, %ebx       # счётчик цифр
+    movl summ, %eax     # загрузили сумму
 
-.print_loop:
-    movl $0, %edx            # обнуляем edx (старшая часть делимого)
-    idivl ten                 # делим edx:eax на 10
-    addb $'0', %dl           # остаток -> ASCII символ
-    decl %edi
-    movb %dl, (%edi)         # сохраняем символ в буфер
-    incl %ecx                # увеличиваем длину строки
-    test %eax, %eax
-    jnz .print_loop
+.nextdigit:
+    movl $0, %edx
+    idivl ten        # делим на 10
+    addb $'0', %dl      # преобразуем цифру в не цифру
+    lea outbuf, %edi
+    addl $15, %edi      # ставим указатель в конец буфера
+    subl %ebx, %edi     # сдвигаемся влево по количеству цифр
+    movb %dl, (%edi)
+    incl %ebx
+    cmpl $0, %eax
+    jg .nextdigit
 
     # write
     movl $4, %eax
     movl $1, %ebx
-    movl %edi, %ecx
-    movl %ecx, %edx
+    movl %ebx, %edx     # длина
+    movl %edi, %ecx     # адрес начала числа
     int $0x80
 
     jmp stop
 
 print_err_msg:
-    Puts "Не цифровая клавиша. Повторите ввод"    # вывод сообщения об ошибке
-    jmp show_prompt     # на ввод следующего символа
+    Puts "Не цифровая клавиша. Повторите ввод"
+    jmp show_prompt
 
 stop:
     Exit $0
