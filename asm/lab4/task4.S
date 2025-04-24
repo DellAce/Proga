@@ -44,13 +44,13 @@ last_in_eax:
     xor %eax, %eax     # очищаем eax
     movb last, %al     # передать код последнего символа в al
     subb $48, %al       # преобразовать в цифру
-    addb %al, summ      # добавить к сумме
+    movzx %al, %cx      # расширить цифру до 16 бит в cx
+    movw summ, %ax      # загрузить текущую сумму (2 байта)
+    addw %cx, %ax       # сложить сумму и цифру
+    jc print_overflow_msg
+    movw %ax, summ      # сохранить обратно в summ
     jc print_overflow_msg
     jmp kbd_input
-
-buffer_overflow:
-    Puts "Буфер заполнен."
-    jmp stop     # на завершение программы
 
 print_overflow_msg:
     Puts "Сумма превышает допустимое значение." # вывод сообщения о переполнении суммы
