@@ -36,7 +36,7 @@ kbd_input:
     ja print_err_msg
     cmpb $'0', c
     jb print_err_msg
-
+    
     movb c, %al
     subb deff, %al
     xor %ah, %ah
