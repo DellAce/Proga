@@ -1,5 +1,3 @@
-# из dt over
-
 /*
  * Программа ввода кодов цифровых символов в буфер в ОП
  */
@@ -7,14 +5,12 @@
 .include "my-macro"
 
 .bss
-    .lcomm summ, 2 # 2 байта для хранения суммы
-    .lcomm buf, 100 # 100 байтовый буфер для кодов прочитанных символов
+    .lcomm summ, 2
     .lcomm c, 1    # однобайтовый буфер для чтения байта из файла stdin
-    .lcomm outbuf, 16  # буфер для десятичного представления суммы
+    .lcomm last, 1 # однобайтовый буфер для хранения последнего символа
 
 .data
 deff: .long 48
-ten:  .long 10
 .text
 .global _start
 
@@ -22,48 +18,47 @@ _start:
     sub    %esi, %esi     # указатель адреса байта в буфере buf (индексный регистр)
 
 show_prompt:
-    Puts "Вводите цифру, друг мой!"     # макровызов вывода строки в stdout
+    Puts "Вводите цифру, друг мой!"     # макровызов вывода строки в
+                    # файл stdout (подсказка ввода)
 
 kbd_input:
-    Getchar $c          # макровызов ввода байта из stdin в c
+    Getchar $c          # макровызов ввода байта из stdin в
+            # промежуточный буфер c
+    cmpl $0, %eax     # наступило событие EOF (конец файла stdin) ? 
+    je stop        # Да - на завершение программы
+    cmpb $'\n', c     # это символ перевода строки ?
+    je last_in_eax     # ДА - на ввод следующего символа
+    cmpb $'9', c      # код больше кода символа '9' ?
+    ja print_err_msg    # ДА - на вывод сообщения об ошибке
+    cmpb $'0', c    # код меньше кода символа '0' ?
+    jb print_err_msg    # ДА - на вывод сообщения об ошибке
+    movb c, %al         # передать код символа из c в al
+    movb %al, last      # сохранить последний символ
 
-    cmpl $0, %eax     # EOF?
-    je print_sum      # Да — выводим сумму
 
-    cmpb $'\n', c
-    je kbd_input
-    cmpb $'9', c
-    ja print_err_msg
-    cmpb $'0', c
-    jb print_err_msg
-    
-    movb c, %al
-    subb deff, %al
-    xor %ah, %ah
-    addw summ, %ax
+
+    Puts "Цифра! Хорошо." # сообщения об успехе вводе
+
+    jmp show_prompt    # на ввод следующего символа
+last_in_eax:
+    xor %eax, %eax     # очищаем eax
+    movb last, %al     # передать код последнего символа в al
+    subb $48, %al       # преобразовать в цифру
+    addb %al, summ      # добавить к сумме
     jc print_overflow_msg
-    movw %ax, summ
-    jmp show_prompt
+    jmp kbd_input
+
+buffer_overflow:
+    Puts "Буфер заполнен."
+    jmp stop     # на завершение программы
 
 print_overflow_msg:
-    Puts "Слишком большая сумма! Переполнение."
-    jmp stop
-
-print_sum:
-    movl $0, %ebx       # счётчик цифр
-    movl summ, %eax     # загрузили сумму
-
-.nextdigit:
-    movl $0, %edx
-    idivl ten        # делим на 10
-    addb $'0', %dl      # преобразуем цифру в не цифру
-
-
-    jmp stop
+    Puts "Сумма превышает допустимое значение." # вывод сообщения о переполнении суммы
+    jmp stop     # на завершение программы
 
 print_err_msg:
-    Puts "Не цифровая клавиша. Повторите ввод"
-    jmp show_prompt
+    Puts "Не цифровая клавиша. Повторите ввод"    # вывод сообщения об ошибке
+    jmp show_prompt     # на ввод следующего символа
 
 stop:
     Exit $0
