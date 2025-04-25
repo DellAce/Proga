@@ -93,7 +93,7 @@ class TextEditor:
         self.modified = True
 
     def undo(self, steps=1):
-        for _ in range(steps):
+        for loop in range(steps):
             if self.history:
                 self.text = self.history.pop()
             else:
