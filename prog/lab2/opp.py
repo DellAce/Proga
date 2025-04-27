@@ -1,6 +1,3 @@
-# Командный текстовый редактор с восстановленными проверками и читаемыми if-блоками
-
-
 class TextEditor:
     def __init__(self, file_name):
         self.file_name = file_name
@@ -10,7 +7,7 @@ class TextEditor:
         self.modified = False
 
         try:
-            with open(file_name, "r", encoding="utf-8") as f:
+            with open(file_name, "r") as f:
                 self.text = f.read().splitlines()
         except FileNotFoundError:
             self.text = []
