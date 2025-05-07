@@ -19,13 +19,10 @@ def calculate_statistics(data):
         count = len(data)
         avg = mean(data)
         med = median(data)
-        try:
-            mod = mode(data)
-        except:
-            mod = "Нет уникального модального значения"
+        mod = mode(data)
         return count, avg, med, mod
-    except Exception as e:
-        print(f"Ошибка при вычислении статистики: {e}")
+    except Exception:
+        print(f"Ошибка при вычислении статистики")
         return None
 
 
