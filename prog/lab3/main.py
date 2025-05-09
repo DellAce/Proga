@@ -27,7 +27,7 @@ def calculate_statistics(data):
 
 
 def main():
-    if len(sys.argv) < 3:
+    if len(sys.argv) != 3:
         print("Использование: python main.py <файл> <интервал>")
         sys.exit(1)
 
