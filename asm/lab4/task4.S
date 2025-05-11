@@ -1,24 +1,18 @@
 /*
- * Программа ввода кодов цифровых символов и вычисления суммы
- * одноцифровых чисел с проверкой переполнения.
- * 
- * Используется ввод из стандартного ввода (stdin).
- * Вывод суммы в десятичной системе.
- * 
- * Ассемблирование: as -ahlsm=task4.lst --32 -gstabs+ -o task4.o task4.S
- * Редактирование связей:  ld -melf_i386 -o task4-exe-S task4.o
+Asm: as -ahlsm=task4.lst --32 -gstabs+ -o task4.o task4.S
+Ld:  ld -melf_i386 -o task4-exe-S task4.o
  */
 
 .include "my-macro"
 
 .bss
-    .lcomm summ, 2        # накопленная сумма (word)
+    .lcomm summ, 2        # накопленная сумма 
     .lcomm c, 1           # однобайтовый буфер для Getchar
     .lcomm last, 1        # последний введённый символ
-    .lcomm buffer, 12     # буфер для печати числа (макс 11 цифр + \0)
+    .lcomm buffer, 12     # буфер для печати числа
 
 .data
-    deff: .long 48         # константа '0' (для макросов)
+    deff: .long 48         # константа 0
 
 .text
 .global _start
@@ -30,7 +24,7 @@ show_prompt:
     Puts "Вводите цифру, друг мой!"     # макровызов вывода строки в stdout
 
 kbd_input:
-    Getchar $c             # ввод байта -> c,   EAX == 0 при EOF
+    Getchar $c             # ввод байта c
     cmpl $0, %eax          # проверка на EOF
     je output_sum          # если EOF, переходим к выводу суммы
 
