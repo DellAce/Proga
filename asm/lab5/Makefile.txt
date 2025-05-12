@@ -1,5 +1,19 @@
+CC=ld
+
 adr-mode: adr-mode.o
 	ld -melf_i386 -o adr-mode adr-mode.o
 
 adr-mode.o: adr-mode.S my-macro
 	as -ahlsm=adr-mode.lst --32 -gstabs+ -o adr-mode.o adr-mode.S
+
+task5: task5.o
+	$(CC) -melf_i386 -o task5-exe-S task5.o
+
+task5.o: task5.S my-macro
+	as -ahlsm=task5.lst --32 -gstabs+ -o task5.o task5.S
+
+task5s: task5s.o
+	ld -melf_i386 -o task5s-exe-S task5s.o
+
+task5s.o: task5s.S my-macro
+	as -ahlsm=task5s.lst --32 -gstabs+ -o task5s.o task5s.S

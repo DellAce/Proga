@@ -1,7 +1,0 @@
-
-.macro Finish
-		movl $0, %ebx # first argument: exit code
-		movl $1, %eax # sys_exit index
-		int $0x80 # kernel interrupt
-.endm
-
