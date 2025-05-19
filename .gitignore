@@ -2,3 +2,5 @@
 /progenv
 test.py
 test.exe    
+/__pycache__
+*.pyc
