@@ -15,7 +15,7 @@ if len(sys.argv) != 3:
 
 L, R = map(int, sys.argv[1:])
 if L % 2 or R % 2 or L < 4 or R < L:
-    raise ValueError("L и R должны быть чётными, L ≥ 4, L ≤ R")
+    raise ValueError("L и R должны быть чётными, L >= 4, L <= R")
 
 
 N = R
@@ -26,7 +26,6 @@ lib.calculate_primes(prime_flags, N)
 
 
 def is_prime(num: int) -> bool:
-    """Проверяем простоту через готовый индикатор"""
     return bool(prime_flags[num])
 
 
