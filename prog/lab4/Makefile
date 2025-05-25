@@ -4,8 +4,8 @@ PYTHON  = python3
 
 all: libprimes.so
 
-libprimes.so: lab4.c lab4.h
-	$(CC) $(CFLAGS) -fPIC -shared -o $@ lab4.c
+libprimes.so: calculate_primes.c calculate_primes.h
+	$(CC) $(CFLAGS) -fPIC -shared -o $@ calculate_primes.c
 
 run: libprimes.so lab4.py
 	$(PYTHON) lab4.py 4 10
