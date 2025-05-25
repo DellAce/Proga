@@ -8,7 +8,7 @@ lib.calculate_primes.restype = None
 
 def main():
     if len(sys.argv) != 3:
-        print("python lab4_1.py <start> <end>")
+        print("python lab4.py <start> <end>")
         sys.exit(1)
     start = int(sys.argv[1])
     end = int(sys.argv[2])
