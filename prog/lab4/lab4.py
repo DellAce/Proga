@@ -18,13 +18,12 @@ def main():
     n = end + 1
     ARRAY = c_int * (n)
     primes = ARRAY()
-    lib.calculate_primes(primes, n)
     for k in range(start, end + 1):
+        lib.calculate_primes(primes, n)
         normas = []
-        for i in range(2, k):
+        for i in range(2, k // 2 + 1):
             if primes[i] == 1 and primes[k - i] == 1:
                 normas.append((i, k - i))
-
-        print(
-            f"{k} {len(normas)} {normas}"
-        )  # нужно добавить что бы первое слогаемое было меньше второго
+        count = len(normas)
+        min_pair = normas[0] if normas else None
+        print(f"{k} {count} {min_pair}")
