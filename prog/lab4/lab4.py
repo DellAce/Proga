@@ -27,3 +27,7 @@ def main():
         count = len(normas)
         min_pair = normas[0] if normas else None
         print(f"{k} {count} {min_pair}")
+
+
+if __name__ == "__main__":
+    main()
