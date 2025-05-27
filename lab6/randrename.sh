@@ -20,16 +20,15 @@ fi
 
 # все файлы в массив
 files=( "$dir"/* )
-if [ ${#files[@]} -eq 0 ]; then
+if [ ${#files[*]} -eq 0 ]; then
   echo "В каталоге нет файлов"
   exit 0
 fi
 
-rand_file="${files[RANDOM % ${#files[@]}]}"
+rand_file="${files[RANDOM % ${#files[*]}]}"
 
 # сохраняем расширение и формируем новое имя
 ext="${rand_file##*.}"
 newpath="$dir/$newbase.$ext"
 
-mv -- "$rand_file" "$newpath" \
-  && echo "Переименовал '$(basename "$rand_file")' → '$(basename "$newpath")'"
+mv -- "$rand_file" "$newpath" && echo "Переименовал '$(basename "$rand_file")' → '$(basename "$newpath")'" || echo "Ошибка при переименовании"
