@@ -1,34 +1,50 @@
 #!/bin/bash
 # Дата: 2025.05.27
 # Автор: Нажеев А
-# переименовываем случайный файл из заданного каталога
+# переименовывем случайный файл
 
-# переданы два параметра
 if [ $# -ne 2 ]; then
-  echo "Использование: $0 <каталог> <новое_имя_без_расширения>"
+  echo "$0 <каталог> <новое_имя_без_расширения>"
   exit 1
 fi
 
 dir="$1"
 newbase="$2"
 
-# каталог существует и не пусты
 if [ ! -d "$dir" ]; then
-  echo "Ошибка: каталог '$dir' не найден"
+  echo "каталог '$dir' не найден"
   exit 1
 fi
 
-# все файлы в массив
-files=( "$dir"/* )
-if [ ${#files[*]} -eq 0 ]; then
+files=()
+for f in "$dir"/.* "$dir"/*; do
+  [ -f "$f" ] || continue
+  name=${f##*/}
+  [ "$name" = "." ] && continue  
+  [ "$name" = ".." ] && continue 
+  files+=( "$f" )
+done
+
+if [ ${#files[@]} -eq 0 ]; then
   echo "В каталоге нет файлов"
   exit 0
 fi
 
-rand_file="${files[RANDOM % ${#files[*]}]}"
+rand_file="${files[RANDOM % ${#files[@]}]}"
+filename="${rand_file##*/}"
 
-# сохраняем расширение и формируем новое имя
-ext="${rand_file##*.}"
-newpath="$dir/$newbase.$ext"
+if [[ "$filename" == ?*.* ]]; then
+    ext="${filename##*.}"
+else
+    ext=""
+fi
 
-mv -- "$rand_file" "$newpath" && echo "Переименовал '$(basename "$rand_file")' → '$(basename "$newpath")'" || echo "Ошибка при переименовании"
+if [ -n "$ext" ]; then
+  newname="$newbase.$ext"
+else
+  newname="$newbase"
+fi
+
+newpath="$dir/$newname"
+
+mv -- "$rand_file" "$newpath" && echo "Переименовал '$filename' → '$(basename "$newpath")'" || echo "Ошибка при переименовании"
