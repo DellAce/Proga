@@ -42,13 +42,13 @@ read_loop:
 
         cmp     $0,%esi              # это первая цифра?
         je      store_k         # да, сохраняем её
-        movb    %al,l            # вторая → l
+        movb    %al,l            # вторая -> l
         inc     %esi
         cmp     $2,%esi
-        jl      read_loop            # ещё нет двух – заново
+        jl      read_loop            # ещё нет двух - заново
         jmp     compute
 store_k:
-        movb    %al,k            # первая → k
+        movb    %al,k            # первая -> k
         inc     %esi
         jmp     read_loop
 
