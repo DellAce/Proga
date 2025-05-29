@@ -1,4 +1,5 @@
-
+#  as -ahlsm=func.lst --32 -gstabs+ -o func.o func.S
+#  ld -melf_i386 -o func-exe-S func.o
 #    	ABI соглашения о вызовах функций
 
 #	Байты из массива Symbols читаются по одному.
