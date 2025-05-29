@@ -65,7 +65,7 @@ calc_loop:
         mov %ebx,%eax            # k
         imul $24,%eax             # k * 24
         mov %esi,%ecx            # i
-        shl $2,%ecx              # i * 4
+        imul $4,%ecx              # i * 4
         add %ecx,%eax
         add $A,%eax
         mov (%eax),%eax          # EAX = A[k][i]
@@ -74,7 +74,7 @@ calc_loop:
         mov %esi,%ecx
         imul $24,%ecx             # i * 24
         mov %edx,%edi            # l
-        shl $2,%edi              # l * 4
+        imul $4,%edi              # l * 4
         add %edi,%ecx
         add $A,%ecx
         mov (%ecx),%ecx          # ECX = A[i][l]
