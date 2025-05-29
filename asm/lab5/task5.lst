@@ -11,6 +11,20 @@ GAS LISTING task5.S 			page 1
    4              	        xorl  %ebx, %ebx
    5              	        int   $0x80
    6              	.endm
+   7              	
+   8              	.macro Puts string
+   9              	.data
+  10              	    str\@:     .ascii "\string\n"  # формирование фактической строки �
+  11              	
+  12              	    strlen\@ =     . - str\@           # получение значения длины строк�
+  13              	
+  14              	.text
+  15              	    movl $4, %eax        # номер сист. вызова write
+  16              	    movl $1, %ebx        # параметр 1: дескриптор стандартного выв
+  17              	    movl $str\@, %ecx    # параметр 2: адрес памяти с выводимыми си
+  18              	    movl $strlen\@, %edx     # параметр 3: количество байтов для выв�
+  19              	    int $0x80        # выполнить системный вызов
+  20              	.endm
    5              	.bss
    6              	    .lcomm buf, 1       # буфер для одного байта
    7              	    .lcomm outbuf, 4    # буфер для вывода числа
@@ -44,6 +58,9 @@ GAS LISTING task5.S 			page 1
   15      1D000000 
   16 0078 1F000000 	        .long 31,32,33,34,35,36
   16      20000000 
+GAS LISTING task5.S 			page 2
+
+
   16      21000000 
   16      22000000 
   16      23000000 
@@ -58,9 +75,6 @@ GAS LISTING task5.S 			page 1
   25              	
   26              	read_loop:
   27 0002 B8030000 	        mov $3,%eax              # sysread
-GAS LISTING task5.S 			page 2
-
-
   27      00
   28 0007 31DB     	        xor %ebx,%ebx            # stdin
   29 0009 B9000000 	        mov $buf,%ecx
@@ -74,110 +88,115 @@ GAS LISTING task5.S 			page 1
   35 0019 31C0     	        xor %eax,%eax
   36 001b A0000000 	        movb buf,%al              # al считанный символ
   36      00
-  37 0020 3C30     	        cmp $'0',%al             # меньше '0' ? = пропуск
+  37 0020 3C31     	        cmp $'1',%al             # меньше '1' ? = пропуск
   38 0022 72DE     	        jb read_loop
-  39 0024 3C35     	        cmp $'5',%al             # больше '5' ? = пропуск
+  39 0024 3C36     	        cmp $'6',%al             # больше '6' ? = пропуск
   40 0026 77DA     	        ja read_loop
-  41 0028 2C30     	        sub $'0',%al             # al = 0‑5
+  41 0028 2C30     	        sub $'0',%al             # al = 1‑6
   42              	
   43 002a 83FE00   	        cmp $0,%esi              # это первая цифра?
-  44 002d 740D     	        je store_k         # да, сохраняем её
-  45 002f A2910000 	        movb %al,l            # вторая -> l
-  45      00
-  46 0034 46       	        inc %esi
-  47 0035 83FE02   	        cmp $2,%esi
-  48 0038 7CC8     	        jl read_loop            # ещё нет двух - заново
-  49 003a EB08     	        jmp compute
-  50              	store_k:
-  51 003c A2900000 	        movb %al,k            # первая -> k
-  51      00
-  52 0041 46       	        inc %esi
-  53 0042 EBBE     	        jmp read_loop
-  54              	
-  55              	compute:
-  56 0044 31F6     	        xor %esi,%esi            # i = 0
-  57              	
-  58              	calc_loop:
-  59 0046 31DB     	        xor %ebx,%ebx
-  60 0048 8A1D9000 	        movb k,%bl           # k в EBX
-  60      0000
-  61 004e 31D2     	        xor %edx,%edx
-  62 0050 8A159100 	        movb l,%dl        # l в EDX
+  44 002d 740F     	        je store_k         # да, сохраняем её
+  45 002f FEC8     	        dec %al
+  46 0031 A2910000 	        movb %al,l            # вторая -> l
+  46      00
+  47 0036 46       	        inc %esi
+  48 0037 83FE02   	        cmp $2,%esi
+  49 003a 7CC6     	        jl read_loop            # ещё нет двух - заново
+  50 003c EB0A     	        jmp compute
+  51              	store_k:
+  52 003e FEC8     	        dec %al
+  53 0040 A2900000 	        movb %al,k            # первая -> k
+  53      00
+  54 0045 46       	        inc %esi
+  55 0046 EBBA     	        jmp read_loop
+  56              	
+  57              	compute:
+  58 0048 31F6     	        xor %esi,%esi            # i = 0
+  59              	
+  60              	calc_loop:
+  61 004a 31DB     	        xor %ebx,%ebx
+  62 004c 8A1D9000 	        movb k,%bl           # k в EBX
   62      0000
-  63              	
-  64              	        # A[k][i]
-  65 0056 89D8     	        mov %ebx,%eax            # k
-  66 0058 6BC018   	        imul $24,%eax             # k * 24
-  67 005b 89F1     	        mov %esi,%ecx            # i
-  68 005d 6BC904   	        imul $4,%ecx              # i * 4
-  69 0060 01C8     	        add %ecx,%eax
-  70 0062 05000000 	        add $A,%eax
-  70      00
-  71 0067 8B00     	        mov (%eax),%eax          # EAX = A[k][i]
-  72              	
-  73              	        # A[i][l]
-  74 0069 89F1     	        mov %esi,%ecx
-  75 006b 6BC918   	        imul $24,%ecx             # i * 24
+  63 0052 31D2     	        xor %edx,%edx
 GAS LISTING task5.S 			page 3
 
 
-  76 006e 89D7     	        mov %edx,%edi            # l
-  77 0070 6BFF04   	        imul $4,%edi              # l * 4
-  78 0073 01F9     	        add %edi,%ecx
-  79 0075 81C10000 	        add $A,%ecx
-  79      0000
-  80 007b 8B09     	        mov (%ecx),%ecx          # ECX = A[i][l]
-  81              	
-  82 007d 01C8     	        add %ecx,%eax            # сумма
-  83 007f E80F0000 	        call print_int            # печать
-  83      00
-  84              	
-  85 0084 46       	        inc %esi                 # i++
-  86 0085 83FE06   	        cmp $6,%esi
-  87 0088 7CBC     	        jl calc_loop
-  88              	
-  89              	        Finish
-  89 008a B8010000 	>  movl $1,%eax
-  89      00
-  89 008f 31DB     	>  xorl %ebx,%ebx
-  89 0091 CD80     	>  int $0x80
+  64 0054 8A159100 	        movb l,%dl        # l в EDX
+  64      0000
+  65              	
+  66              	        # A[k][i]
+  67 005a 89D8     	        mov %ebx,%eax            # k
+  68 005c 6BC018   	        imul $24,%eax             # k * 24
+  69 005f 89F1     	        mov %esi,%ecx            # i
+  70 0061 6BC904   	        imul $4,%ecx              # i * 4
+  71 0064 01C8     	        add %ecx,%eax
+  72 0066 05000000 	        add $A,%eax
+  72      00
+  73 006b 8B00     	        mov (%eax),%eax          # EAX = A[k][i]
+  74              	
+  75              	        # A[i][l]
+  76 006d 89F1     	        mov %esi,%ecx
+  77 006f 6BC918   	        imul $24,%ecx             # i * 24
+  78 0072 89D7     	        mov %edx,%edi            # l
+  79 0074 6BFF04   	        imul $4,%edi              # l * 4
+  80 0077 01F9     	        add %edi,%ecx
+  81 0079 81C10000 	        add $A,%ecx
+  81      0000
+  82 007f 8B09     	        mov (%ecx),%ecx          # ECX = A[i][l]
+  83              	
+  84 0081 01C8     	        add %ecx,%eax            # сумма
+  85 0083 E80F0000 	        call print_int            # печать
+  85      00
+  86              	
+  87 0088 46       	        inc %esi                 # i++
+  88 0089 83FE06   	        cmp $6,%esi
+  89 008c 7CBC     	        jl calc_loop
   90              	
-  91              	print_int:
-  92 0093 B90A0000 	        mov $10,%ecx             # делитель
-  92      00
-  93 0098 31D2     	        xor %edx,%edx
-  94 009a F7F1     	        div %ecx                 # EAX = десятки, EDX = единицы
-  95              	
-  96 009c BF040000 	        mov $outbuf,%edi
-  96      00
-  97 00a1 83F800   	        cmp $0,%eax
-  98 00a4 7510     	        jne two_digits
-  99 00a6 80C230   	        add $'0',%dl             # одна цифра
- 100 00a9 8817     	        mov %dl,(%edi)
- 101 00ab C647010A 	        movb $'\n',1(%edi)
- 102 00af BA020000 	        mov $2,%edx              # len = 2
- 102      00
- 103 00b4 EB13     	        jmp write_out
- 104              	
- 105              	two_digits: # подготовка двух цифр
- 106 00b6 0430     	        add $'0',%al             # десятки
- 107 00b8 80C230   	        add $'0',%dl             # единицы
- 108 00bb 8807     	        mov %al,(%edi)
- 109 00bd 885701   	        mov %dl,1(%edi)
- 110 00c0 C647020A 	        movb $'\n',2(%edi)
- 111 00c4 BA030000 	        mov $3,%edx              # len = 3
- 111      00
- 112              	
- 113              	write_out:
- 114 00c9 B8040000 	        mov $4,%eax              # sys_write
- 114      00
- 115 00ce BB010000 	        mov $1,%ebx              # fd = 1 (stdout)
- 115      00
- 116 00d3 B9040000 	        mov $outbuf,%ecx
- 116      00
- 117 00d8 CD80     	        int $0x80
- 118 00da C3       	        ret
+  91              	        Finish
+  91 008e B8010000 	>  movl $1,%eax
+  91      00
+  91 0093 31DB     	>  xorl %ebx,%ebx
+  91 0095 CD80     	>  int $0x80
+  92              	
+  93              	print_int:
+  94 0097 B90A0000 	        mov $10,%ecx             # делитель
+  94      00
+  95 009c 31D2     	        xor %edx,%edx
+  96 009e F7F1     	        div %ecx                 # EAX = десятки, EDX = единицы
+  97              	
+  98 00a0 BF040000 	        mov $outbuf,%edi
+  98      00
+  99 00a5 83F800   	        cmp $0,%eax
+ 100 00a8 7510     	        jne two_digits
+ 101 00aa 80C230   	        add $'0',%dl             # одна цифра
+ 102 00ad 8817     	        mov %dl,(%edi)
+ 103 00af C647010A 	        movb $'\n',1(%edi)
+ 104 00b3 BA020000 	        mov $2,%edx              # len = 2
+ 104      00
+ 105 00b8 EB13     	        jmp write_out
+ 106              	
+ 107              	two_digits: # подготовка двух цифр
+ 108 00ba 0430     	        add $'0',%al             # десятки
+ 109 00bc 80C230   	        add $'0',%dl             # единицы
 GAS LISTING task5.S 			page 4
+
+
+ 110 00bf 8807     	        mov %al,(%edi)
+ 111 00c1 885701   	        mov %dl,1(%edi)
+ 112 00c4 C647020A 	        movb $'\n',2(%edi)
+ 113 00c8 BA030000 	        mov $3,%edx              # len = 3
+ 113      00
+ 114              	
+ 115              	write_out:
+ 116 00cd B8040000 	        mov $4,%eax              # sys_write
+ 116      00
+ 117 00d2 BB010000 	        mov $1,%ebx              # fd = 1 (stdout)
+ 117      00
+ 118 00d7 B9040000 	        mov $outbuf,%ecx
+ 118      00
+ 119 00dc CD80     	        int $0x80
+ 120 00de C3       	        ret
+GAS LISTING task5.S 			page 5
 
 
 DEFINED SYMBOLS
@@ -188,11 +207,11 @@ DEFINED SYMBOLS
              task5.S:19     .data:00000091 l
              task5.S:23     .text:00000000 _start
              task5.S:26     .text:00000002 read_loop
-             task5.S:50     .text:0000003c store_k
-             task5.S:55     .text:00000044 compute
-             task5.S:58     .text:00000046 calc_loop
-             task5.S:91     .text:00000093 print_int
-             task5.S:105    .text:000000b6 two_digits
-             task5.S:113    .text:000000c9 write_out
+             task5.S:51     .text:0000003e store_k
+             task5.S:57     .text:00000048 compute
+             task5.S:60     .text:0000004a calc_loop
+             task5.S:93     .text:00000097 print_int
+             task5.S:107    .text:000000ba two_digits
+             task5.S:115    .text:000000cd write_out
 
 NO UNDEFINED SYMBOLS

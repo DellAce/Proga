@@ -22,8 +22,8 @@ l:  .byte 0              # вторая цифра
 .globl _start
 _start:
         xor %esi,%esi
-
 read_loop:
+
         mov $3,%eax              # sysread
         xor %ebx,%ebx            # stdin
         mov $buf,%ecx
@@ -34,20 +34,22 @@ read_loop:
 
         xor %eax,%eax
         movb buf,%al              # al считанный символ
-        cmp $'0',%al             # меньше '0' ? = пропуск
+        cmp $'1',%al             # меньше '1' ? = пропуск
         jb read_loop
-        cmp $'5',%al             # больше '5' ? = пропуск
+        cmp $'6',%al             # больше '6' ? = пропуск
         ja read_loop
-        sub $'0',%al             # al = 0‑5
+        sub $'0',%al             # al = 1‑6
 
         cmp $0,%esi              # это первая цифра?
         je store_k         # да, сохраняем её
+        dec %al
         movb %al,l            # вторая -> l
         inc %esi
         cmp $2,%esi
         jl read_loop            # ещё нет двух - заново
         jmp compute
 store_k:
+        dec %al
         movb %al,k            # первая -> k
         inc %esi
         jmp read_loop
