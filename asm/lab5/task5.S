@@ -1,6 +1,6 @@
 
 #  as -ahlsm=task5.lst --32 -gstabs+ -o task5.o task5.S
-#   ld -melf_i386 -o task5-exe-S task5.o
+#  ld -melf_i386 -o task5-exe-S task5.o
 .include "my-macro"
 .bss
     .lcomm buf, 1       # буфер для одного байта
@@ -116,3 +116,4 @@ write_out:
         mov $outbuf,%ecx
         int $0x80
         ret
+        
