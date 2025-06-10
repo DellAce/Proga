@@ -1,12 +1,8 @@
-from collections import defaultdict
-
-
 def group_anagrams(strs):
-    d = defaultdict(list)
+    groups = {}
     for s in strs:
-        d["".join(sorted(s))].append(s)
-    return list(d.values())
-
-
-strs = ["eat", "tea", "tan", "ate", "nat", "bat"]
-print(group_anagrams(strs))
+        key = "".join(sorted(s))  # сортировка даёт одинаковый «отпечаток»
+        if key not in groups:  # создаём список при первом появлении
+            groups[key] = []
+        groups[key].append(s)
+    return list(groups.values())

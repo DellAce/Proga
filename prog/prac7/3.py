@@ -1,14 +1,13 @@
-from collections import defaultdict
-
-
 def subarray_sum(nums, k):
-    cnt = defaultdict(int)
-    cnt[0] = 1
-    s = ans = 0
+
+    cnt = {0: 1}
+    s = 0
+    ans = 0
+
     for n in nums:
         s += n
-        ans += cnt[s - k]
-        cnt[s] += 1
+        ans += cnt.get(s - k, 0)
+        cnt[s] = cnt.get(s, 0) + 1
     return ans
 
 
